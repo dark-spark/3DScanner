@@ -23,9 +23,11 @@ void setup() {
 }
 
 void draw() {
-  background(0);
-  fill(255);
-  
+  background(255);
+  fill(0);
+  for (int i = 0; i < index; i++) {
+    point(xVals[i], yVals[i]);
+  }
 //  noStroke();
 //  translate(width/2, height/2);
 //  beginShape(POINTS);
@@ -45,9 +47,11 @@ void serialEvent (Serial myPort) {
       println(split);
       inRotation = append(inRotation, int(split[0]));
       inHeight = append(inHeight, int(split[1]));
-      inDistance = append(inDistance, int(split[2]));
+      inDistance = append(inDistance, int(split[2]) / 10);
       xVals = append(xVals, int((distanceFromSensor - inDistance[index]) * cos(inRotation[index]) + width/2));
+      println(xVals[index]);
       yVals = append(yVals, int((distanceFromSensor - inDistance[index]) * sin(inRotation[index]) + height/2));
+      println(yVals[index]);
       index++;
     }
   }
