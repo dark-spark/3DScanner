@@ -9,9 +9,10 @@ int yVals[] = new int[0];
 int index = 0;
 Serial myPort;
 
+  float rads = PI / 180;
+
 void setup() {
   size(800, 600, P3D); 
-
   //Start serial comms and initialise
   boolean serial = startSerial();
   if (serial) {
@@ -25,15 +26,12 @@ void setup() {
 void draw() {
   background(255);
   fill(0);
+  translate(width/2, height/2);
+  beginShape(POINTS);
   for (int i = 0; i < index; i++) {
-    point(xVals[i], yVals[i]);
+    vertex(xVals[i], yVals[i], inHeight[i]);
   }
-//  noStroke();
-//  translate(width/2, height/2);
-//  beginShape(POINTS);
-//  for (int i = 0; i > inHeight.length; i++) {
-//  }
-//  endShape();
+  endShape();
 }
 
 void serialEvent (Serial myPort) {
@@ -48,12 +46,17 @@ void serialEvent (Serial myPort) {
       inRotation = append(inRotation, int(split[0]));
       inHeight = append(inHeight, int(split[1]));
       inDistance = append(inDistance, int(split[2]) / 10);
-      xVals = append(xVals, int((distanceFromSensor - inDistance[index]) * cos(inRotation[index]) + width/2));
+      xVals = append(xVals, int(distanceFromSensor - inDistance[index]) * cos(inRotation[index]*rads));
       println(xVals[index]);
-      yVals = append(yVals, int((distanceFromSensor - inDistance[index]) * sin(inRotation[index]) + height/2));
+      yVals = append(yVals, int(distanceFromSensor - inDistance[index]) * sin(inRotation[index]*rads));
       println(yVals[index]);
       index++;
     }
+    String[] dataString = new String[index];
+    for (int i = 0; i < index; i++) {
+      dataString[i] = inRotation + "," + inDistance + "," + inHeight;
+    }
+    saveStrings("data.txt", dataString);
   }
 }
 
