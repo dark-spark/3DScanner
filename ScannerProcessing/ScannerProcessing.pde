@@ -7,6 +7,7 @@ int inDistance[] = new int[0];
 int xVals[] = new int[0];
 int yVals[] = new int[0];
 int index = 0;
+float inc = 0.01;
 Serial myPort;
 
   float rads = PI / 180;
@@ -31,7 +32,10 @@ void draw() {
   for (int i = 0; i < index; i++) {
     vertex(xVals[i], yVals[i], inHeight[i]);
   }
+  rotateX(inc);
+  rotateY(inc);
   endShape();
+  inc += 0.01;
 }
 
 void serialEvent (Serial myPort) {
@@ -46,9 +50,9 @@ void serialEvent (Serial myPort) {
       inRotation = append(inRotation, int(split[0]));
       inHeight = append(inHeight, int(split[1]));
       inDistance = append(inDistance, int(split[2]) / 10);
-      xVals = append(xVals, int(distanceFromSensor - inDistance[index]) * cos(inRotation[index]*rads));
+      xVals = append(xVals, int((distanceFromSensor - inDistance[index]) * cos(inRotation[index]*rads)));
       println(xVals[index]);
-      yVals = append(yVals, int(distanceFromSensor - inDistance[index]) * sin(inRotation[index]*rads));
+      yVals = append(yVals, int((distanceFromSensor - inDistance[index]) * sin(inRotation[index]*rads)));
       println(yVals[index]);
       index++;
     }
