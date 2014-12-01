@@ -35,48 +35,39 @@ void setup() {
   pinMode(plateMotor2, OUTPUT);
   vertStepper.setSpeed(100);
   findIndex();
-  Serial.println("Type 'Begin' to start scan");
+  delay(5000);
+  mode = 2;
 }
 
 void loop() {
-  switch(mode) {
-  case 0:
-    if (Serial.available() > 0) {
-      char incommingByte;
-      incommingByte = Serial.read();
-      if (recieved.length() > 4) {
-        if (recieved == "Begin") {
-          mode = 2;
-          recieved = "";
-        } 
-        else {
-          recieved = "";
-        }
-      } 
-      else {
-        recieved += incommingByte;
-      }        
-
-      break;
-    case 2:
-      for (int i = 0; i <= vertTravel; i = i + vertResolution) {
-        int t = millis();
-        for (int j = 0; j <= 359; j = j + rotationResolution) {
-          distance = getDistance();
-          serialSend(j, i, distance);
-          plateMove(j);
-          delay(100); //Wait for plate motion to settle. 
-        }
-        findIndex();
-        vertStepper.step(steps(vertResolution));
-        Serial.print("Timer = ");
-        Serial.println(millis() - t);
-      } 
-    case 3:
-      break;
+  if(mode == 0) {
+    if (Serial.available()) {
+      char inChar = (char)Serial.read(); 
+      if (inChar == '.') {
+        mode = 2;
+      }
     }
+  } 
+  else if(mode == 2) {
+    for (int i = 0; i <= vertTravel; i = i + vertResolution) {
+      int t = millis();
+      for (int j = 0; j <= 359; j = j + rotationResolution) {
+        distance = getDistance();
+        serialSend(j, i, distance);
+        plateMove(j);
+        delay(100); //Wait for plate motion to settle. 
+      }
+      findIndex();
+      vertStepper.step(steps(vertResolution));
+      Serial.print("Timer = ");
+      Serial.println(millis() - t);
+    }
+  } 
+  else {
+    mode = 0;
   }
 }
+
 
 int steps(int distance) {
   int steps;
@@ -112,7 +103,7 @@ void plateMotorStop() {
 void findIndex() {
   Serial.print("Finding Index of Encoder...");
   while (encoderIndex == false) {
-    plateMotorForwardSlow();
+    plateMotorForwardFast();
     if (digitalRead(indexPin) == HIGH) {
       encoderIndex = true;
       encoder.write(0);
@@ -224,14 +215,19 @@ int strstart_P(const char *s1, const char * PROGMEM s2)
 }
 
 void serialSend(int rotationalPos, int vertPos, int distance) {
-  Serial.print("*");
+  Serial.print("#");
   Serial.print(rotationalPos);
   Serial.print(",");
   Serial.print(vertPos);
   Serial.print(",");
-  Serial.print(distance);
-  Serial.println("#");
+  Serial.println(distance);
 }
+
+
+
+
+
+
 
 
 

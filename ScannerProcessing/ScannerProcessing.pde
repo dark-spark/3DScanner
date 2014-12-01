@@ -16,7 +16,7 @@ void setup() {
   boolean serial = startSerial();
   if (serial) {
     println("Serial connected");
-    myPort.write("Begin");
+    myPort.write(".");
   } else {
     println("Serial NOT connected");
   }
@@ -24,26 +24,31 @@ void setup() {
 
 void draw() {
   background(0);
-  noStroke();
-  translate(width/2, height/2);
-  beginShape(POINTS);
-  for (int i = 0; i > inHeight.length; i++) {
-  }
-  endShape();
+  fill(255);
+  
+//  noStroke();
+//  translate(width/2, height/2);
+//  beginShape(POINTS);
+//  for (int i = 0; i > inHeight.length; i++) {
+//  }
+//  endShape();
 }
 
 void serialEvent (Serial myPort) {
   String inString = myPort.readStringUntil('\n');
   if (inString != null) {
-    String match[] = match(inString, "*");
+    String[] match = match(inString, "#");
     if (match != null) {
       inString = trim(inString);
+      inString = inString.substring(1);
       String[] split = split(inString, ',');
+      println(split);
       inRotation = append(inRotation, int(split[0]));
       inHeight = append(inHeight, int(split[1]));
       inDistance = append(inDistance, int(split[2]));
-      xVals[index] = ((distanceFromSensor - distance) * cos(inRotation[index]) + width/2;
-      yVals[index] = ((distanceFromSensor - distance) * sin(inRotation[index]) + height/2;
+      xVals = append(xVals, int((distanceFromSensor - inDistance[index]) * cos(inRotation[index]) + width/2));
+      yVals = append(yVals, int((distanceFromSensor - inDistance[index]) * sin(inRotation[index]) + height/2));
+      index++;
     }
   }
 }
@@ -60,5 +65,11 @@ boolean startSerial() {
   } else {
     return false;
   }
+}
+
+void delay(int delay)
+{
+  int time = millis();
+  while (millis () - time <= delay);
 }
 
