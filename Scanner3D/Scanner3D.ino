@@ -3,7 +3,7 @@
 
 const int stepsPerRev = 48;
 const int distPerRev = 127;
-const int vertResolution = 2; //Resolution in mm.
+const int vertResolution = 5; //Resolution in mm.
 const int rotationResolution = 6; //Resoltion in degrees.
 const int vertTravel = 200; //In mm.
 const int indexPin = 6;
@@ -58,7 +58,7 @@ void loop() {
         delay(100); //Wait for plate motion to settle. 
       }
       findIndex();
-      vertStepper.step(steps(vertResolution));
+      vertStepper.step(-steps(vertResolution));
       Serial.print("Timer = ");
       Serial.println(millis() - t);
     }
@@ -103,7 +103,7 @@ void plateMotorStop() {
 void findIndex() {
   Serial.print("Finding Index of Encoder...");
   while (encoderIndex == false) {
-    plateMotorForwardFast();
+    plateMotorForwardSlow();
     if (digitalRead(indexPin) == HIGH) {
       encoderIndex = true;
       encoder.write(0);
