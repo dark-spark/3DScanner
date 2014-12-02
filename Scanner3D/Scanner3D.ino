@@ -50,17 +50,17 @@ void loop() {
   } 
   else if(mode == 2) {
     for (int i = 0; i <= vertTravel; i = i + vertResolution) {
-      int t = millis();
+//      int t = millis();
       for (int j = 0; j <= 359; j = j + rotationResolution) {
-        distance = getDistance();
-        serialSend(j, i, distance);
         plateMove(j);
         delay(100); //Wait for plate motion to settle. 
+        distance = getDistance();
+        serialSend(j, i, distance);
       }
       findIndex();
       vertStepper.step(-steps(vertResolution));
-      Serial.print("Timer = ");
-      Serial.println(millis() - t);
+//      Serial.print("Timer = ");
+//      Serial.println(millis() - t);
     }
   } 
   else {
