@@ -8,6 +8,8 @@ int xVals[] = new int[0];
 int yVals[] = new int[0];
 int index = 0;
 float inc = 0.01;
+float rotX = 0.01;
+float rotY = 0.01;
 Serial myPort;
 
 float rads = PI / 180;
@@ -37,13 +39,27 @@ void draw() {
   fill(0);
   translate(width/2, height/2);
   beginShape(POINTS);
+  strokeWeight(2);
   for (int i = 0; i < index; i++) {
     vertex(xVals[i], yVals[i], inHeight[i]);
   }
-  rotateX(inc);
-  rotateY(inc);
+  rotateX(rotX);
+  rotateY(rotY);
   endShape();
-  inc += 0.01;
+}
+
+void mouseDragged() {  
+  
+  if(pmouseX - mouseX > 1) {
+    rotX += 0.01;
+  } else if (pmouseX - mouseX < 1) {
+    rotX -= 0.01;
+  }  
+  if(pmouseY - mouseY > 1) {
+    rotY += 0.01;
+  } else if (pmouseY - mouseY < 1) {
+    rotY -= 0.01;
+  }  
 }
 
 void serialEvent (Serial myPort) {
@@ -116,17 +132,19 @@ void loadFromFile() {
 
   println("Loading from file: data.txt");
 
-  String loadlist = loadStrings("data.txt");
+  String[] loadlist = loadStrings("data.txt");
 
   for (int i = 0; i < loadlist.length; i++) {
+    
     String[] split = split(loadlist[i], ",");
+    
     inRotation = append(inRotation, int(split[0]));
-    inHeight = append(inHeight, int(split[1]));
-    inDistance = append(inDistance, int(split[2]) / 10);
+    inHeight = append(inHeight, int(split[2]));
+    inDistance = append(inDistance, int(split[1]));
+    
     xVals = append(xVals, int((distanceFromSensor - inDistance[index]) * cos(inRotation[index]*rads)));
-    println(xVals[index]);
     yVals = append(yVals, int((distanceFromSensor - inDistance[index]) * sin(inRotation[index]*rads)));
-    println(yVals[index]);
+    
     index++;
   }
 
