@@ -10,9 +10,8 @@ int index = 0;
 float inc = 0.01;
 float rotX = 0.01;
 float rotY = 0.01;
+float scale = 1;
 Serial myPort;
-
-float rads = PI / 180;
 
 void setup() {
   
@@ -45,21 +44,31 @@ void draw() {
   }
   rotateX(rotX);
   rotateY(rotY);
+  scale(scale);
   endShape();
 }
 
 void mouseDragged() {  
   
-  if(pmouseX - mouseX > 1) {
+  if(pmouseX - mouseX > 2) {
     rotX += 0.01;
-  } else if (pmouseX - mouseX < 1) {
+  } else if (pmouseX - mouseX < 2) {
     rotX -= 0.01;
   }  
-  if(pmouseY - mouseY > 1) {
+  if(pmouseY - mouseY > 2) {
     rotY += 0.01;
-  } else if (pmouseY - mouseY < 1) {
+  } else if (pmouseY - mouseY < 2) {
     rotY -= 0.01;
   }  
+}
+
+void keyPressed() {
+  if(key == '+') {
+    scale *= 1.05;
+  }
+  if(key == '-') {
+    scale *= 0.95;
+  }
 }
 
 void serialEvent (Serial myPort) {
@@ -83,9 +92,9 @@ void serialEvent (Serial myPort) {
       inHeight = append(inHeight, int(split[1]));
       inDistance = append(inDistance, int(split[2]) / 10);
       
-      xVals = append(xVals, int((distanceFromSensor - inDistance[index]) * cos(inRotation[index]*rads)));
+      xVals = append(xVals, int((distanceFromSensor - inDistance[index]) * cos(radians(inRotation[index]))));
       
-      yVals = append(yVals, int((distanceFromSensor - inDistance[index]) * sin(inRotation[index]*rads)));
+      yVals = append(yVals, int((distanceFromSensor - inDistance[index]) * sin(radians(inRotation[index]))));
 
       index++;
     }
@@ -142,8 +151,8 @@ void loadFromFile() {
     inHeight = append(inHeight, int(split[2]));
     inDistance = append(inDistance, int(split[1]));
     
-    xVals = append(xVals, int((distanceFromSensor - inDistance[index]) * cos(inRotation[index]*rads)));
-    yVals = append(yVals, int((distanceFromSensor - inDistance[index]) * sin(inRotation[index]*rads)));
+    xVals = append(xVals, int((distanceFromSensor - inDistance[index]) * cos(radians(inRotation[index]))));
+    yVals = append(yVals, int((distanceFromSensor - inDistance[index]) * sin(radians(inRotation[index]))));
     
     index++;
   }
