@@ -1,44 +1,43 @@
-int xVals[] = new int[0];
-int yVals[] = new int[0];
-int inDistance[] = new int[0];
-int inRotation[] = new int[0];
 int distanceFromSensor = 428; //Millimeters from laser distance measure
-int index = 0;
 float inc = 0.01;
+float rotX;
+float rotY;
+float rotZ;
+int transX = width/2;
+int transY = height/2;
+float scale = 1;
 
 void setup() {
-  
-  size(800, 600, P3D); 
-  
-  float rads = PI / 180;
-  
-  for (int i = 0; i < 180; i++) {
-    inRotation = append(inRotation, i);
-    inDistance = append(inDistance, 350);
 
-    xVals = append(xVals, int(((distanceFromSensor - inDistance[index]) * cos(inRotation[index]*rads)) ));
-    yVals = append(yVals, int(((distanceFromSensor - inDistance[index]) * sin(inRotation[index]*rads))));
-    index++;
+  size(800, 600, P3D); 
+
+  String path = sketchPath;
+
+  String[] fileNames = listFileNames(path);
+
+  for (int i = 0; i < fileNames.length; i++) {
   }
-  println(inRotation);
-  println(xVals);
-  println(yVals);
+
+  loadFromFile("FirstScan.txt");
 }
 
 void draw() {
+  
   background(255);
-  fill(0);  
-  inc += 0.01;
-  translate(width/2, height/2);
+  fill(0);
+  translate(transX, transY);
+  
   beginShape(POINTS);
+  strokeWeight(2);
+  
   for (int i = 0; i < index; i++) {
-    vertex(xVals[i], yVals[i], 0);
+    vertex(xVals[i], yVals[i], inHeight[i]);
   }
-  rotateX(inc);
-  rotateY(inc);
+  
+  rotateX(rotX);
+  rotateY(rotY);
+  rotateZ(rotZ);
+  scale(scale);
   endShape();
-//  for (int i = 0; i < index; i++) {
-//    point(xVals[i], yVals[i]);
-//  }
 }
 
