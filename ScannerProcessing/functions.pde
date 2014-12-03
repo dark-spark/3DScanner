@@ -143,7 +143,7 @@ void saveToFile(String file) {
     dataString[i] = inRotation[i] + "," + inDistance[i] + "," + inHeight[i];
   }
 
-  saveStrings(file, dataString);
+  saveStrings(path + file, dataString);
 }
 
 
@@ -172,36 +172,4 @@ boolean startSerial() {
   }
 }
 
-
-//This function is triggered when ever there is serial data on the port, checks data, formats and adds it to the array. 
-//Also saves the file
-void serialEvent (Serial myPort) {
-
-  String inString = myPort.readStringUntil('\n');
-
-  if (inString != null) {
-
-    String[] match = match(inString, "#");
-
-    if (match != null) {
-
-      inString = trim(inString);
-      inString = inString.substring(1);
-
-      String[] split = split(inString, ',');
-
-      println(split);
-
-      inRotation = append(inRotation, int(split[0]));
-      inHeight = append(inHeight, int(split[1]));
-      inDistance = append(inDistance, int(split[2]) / 10);
-
-      xVals = append(xVals, int((distanceFromSensor - inDistance[index]) * cos(radians(inRotation[index]))));
-      yVals = append(yVals, int((distanceFromSensor - inDistance[index]) * sin(radians(inRotation[index]))));
-
-      index++;
-    }
-    saveToFile(file);
-  }
-}
 

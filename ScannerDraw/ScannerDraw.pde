@@ -2,7 +2,7 @@ import java.io.*;
 
 int distanceFromSensor = 428; //Millimeters from laser distance measure
 float inc = 0.01;
-  String path = "C:/Users/Dark/Documents/Arduino/3DScanner/ScannerFiles";
+String path = "C:/Users/Dark/Documents/Arduino/3DScanner/ScannerFiles/";
 
 void setup() {
 
@@ -13,7 +13,7 @@ void setup() {
   String[] filenames = loadFilenames(path);
 
   String recentFile = filenames[filenames.length -1];
-  
+
   loadFromFile(recentFile);
 }
 
@@ -23,7 +23,7 @@ void draw() {
   fill(0);
   translate(transX, transY);
 
-  beginShape(POINTS);t
+  beginShape(POINTS);
   strokeWeight(2);
 
   for (int i = 0; i < index; i++) {
