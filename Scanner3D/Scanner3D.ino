@@ -1,5 +1,9 @@
 #include <Encoder.h>
 #include <Stepper.h>
+#include <FastLED.h>
+
+#define NUM_LEDS 1
+#define DATA_PIN 0
 
 const int stepsPerRev = 48;
 const int distPerRev = 127;
@@ -27,18 +31,41 @@ int rc = 0 ;
 Stepper vertStepper(stepsPerRev, 12, 13, 14, 15);
 String recieved;
 
+CRGB leds[NUM_LEDS];
+
 void setup() {
+  
   Serial.begin(115200);
   Serial1.begin (115200);
   Serial.println("3D Scanner by Dark.Spark");
+  
   pinMode(indexPin, INPUT);
   pinMode(vertLowerLimit, INPUT_PULLUP);
   pinMode(plateMotor1, OUTPUT);
   pinMode(plateMotor2, OUTPUT);
+  
+  FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUM_LEDS);
+      
   vertStepper.setSpeed(100);
+  
+  leds[0] = CRGB::Red;
+  FastLED.show();
+  
   findIndex();
+  
+  leds[0] = CRGB::Green;
+  FastLED.show();
+  
   findVertLowerLimit();
+  
+  leds[0] = CRGB(255,255,255);
+  FastLED.show();
+  
   delay(5000);
+  
+  leds[0] = CRGB::Blue;
+  FastLED.show();
+  
   mode = 0;
 }
 
@@ -72,7 +99,7 @@ void loop() {
 }
 
 void findVertLowerLimit() {
-  while(vertLowerLimit == HIGH) {
+  while(digitalRead(vertLowerLimit) == HIGH) {
     vertStepper.step(1);
   }
 }

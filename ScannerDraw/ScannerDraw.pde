@@ -7,6 +7,7 @@ String path = "C:/Users/Dark/Documents/Arduino/3DScanner/ScannerFiles/";
 void setup() {
 
   size(800, 600, P3D); 
+  println("3D Scanner by Dark.Spark");
   transX = width/2;
   transY = height/2;
 

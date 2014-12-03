@@ -9,6 +9,7 @@ Serial myPort;
 void setup() {
 
   size(800, 600, P3D); 
+  println("3D Scanner by Dark.Spark");
   transX = width/2;
   transY = height/2;
 
