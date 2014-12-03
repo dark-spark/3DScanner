@@ -24,8 +24,9 @@ void setup() {
   
   if (serial) {
     
-    println("Serial connected");
+    delay(1000);
     myPort.write(".");
+    println("Serial connected");
     
   } else {
     

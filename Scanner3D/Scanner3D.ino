@@ -10,6 +10,7 @@ const int indexPin = 6;
 const int plateMotor1 = 9;
 const int plateMotor2 = 10;
 const int sensorPin = 21;
+const int vertLowerLimit = 3;
 Encoder encoder(5, 4);
 boolean encoderIndex = false;
 int desired;
@@ -31,23 +32,25 @@ void setup() {
   Serial1.begin (115200);
   Serial.println("3D Scanner by Dark.Spark");
   pinMode(indexPin, INPUT);
+  pinMode(vertLowerLimit, INPUT_PULLUP);
   pinMode(plateMotor1, OUTPUT);
   pinMode(plateMotor2, OUTPUT);
   vertStepper.setSpeed(100);
   findIndex();
+  findVertLowerLimit();
   delay(5000);
-  mode = 2;
+  mode = 0;
 }
 
 void loop() {
   if(mode == 0) {
     if (Serial.available()) {
-      char inChar = (char)Serial.read(); 
+      char inChar = (char)Serial.read();
       if (inChar == '.') {
         mode = 2;
       }
     }
-  } 
+  }
   else if(mode == 2) {
     for (int i = 0; i <= vertTravel; i = i + vertResolution) {
 //      int t = millis();
@@ -68,6 +71,11 @@ void loop() {
   }
 }
 
+void findVertLowerLimit() {
+  while(vertLowerLimit == HIGH) {
+    vertStepper.step(1);
+  }
+}
 
 int steps(int distance) {
   int steps;
