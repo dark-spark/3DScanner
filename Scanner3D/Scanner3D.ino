@@ -7,8 +7,8 @@
 
 const int stepsPerRev = 48;
 const int distPerRev = 127;
-const int vertResolution = 5; //Resolution in mm.
-const int rotationResolution = 6; //Resoltion in degrees.
+const int vertResolution = 2; //Resolution in mm.
+const int rotationResolution = 3; //Resoltion in degrees.
 const int vertTravel = 200; //In mm.
 const int indexPin = 6;
 const int plateMotor1 = 9;
@@ -51,12 +51,12 @@ void setup() {
   leds[0] = CRGB::Red;
   FastLED.show();
   
-  findIndex();
+  findVertLowerLimit();
   
   leds[0] = CRGB::Green;
   FastLED.show();
   
-  findVertLowerLimit();
+  findIndex();
   
   leds[0] = CRGB(255,255,255);
   FastLED.show();
