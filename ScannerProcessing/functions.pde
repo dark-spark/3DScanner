@@ -143,7 +143,7 @@ void saveToFile(String file) {
     dataString[i] = inRotation[i] + "," + inDistance[i] + "," + inHeight[i];
   }
 
-  saveStrings(path + file, dataString);
+  saveStrings(path + file + ".txt", dataString);
 }
 
 
