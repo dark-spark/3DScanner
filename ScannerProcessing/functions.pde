@@ -133,3 +133,75 @@ String[] loadFilenames(String path) {
   return folder.list(filenameFilter);
 }
 
+
+//This function creates the data string and saves it to a file
+void saveToFile(String file) {
+
+  String[] dataString = new String[index];
+
+  for (int i = 0; i < index; i++) {
+    dataString[i] = inRotation[i] + "," + inDistance[i] + "," + inHeight[i];
+  }
+
+  saveStrings(file, dataString);
+}
+
+
+//Delay
+void delay(int delay)
+{
+  int time = millis();
+  while (millis () - time <= delay);
+}
+
+
+//This function initiates the serial comms and returns state of connection
+boolean startSerial() {
+
+  println(Serial.list());
+
+  if (Serial.list().length > 0) {
+    myPort = new Serial(this, Serial.list()[0], 9600);
+    println("Port [0] selected for comms");
+    myPort.bufferUntil('\n');
+    myPort.clear();
+
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
+//This function is triggered when ever there is serial data on the port, checks data, formats and adds it to the array. 
+//Also saves the file
+void serialEvent (Serial myPort) {
+
+  String inString = myPort.readStringUntil('\n');
+
+  if (inString != null) {
+
+    String[] match = match(inString, "#");
+
+    if (match != null) {
+
+      inString = trim(inString);
+      inString = inString.substring(1);
+
+      String[] split = split(inString, ',');
+
+      println(split);
+
+      inRotation = append(inRotation, int(split[0]));
+      inHeight = append(inHeight, int(split[1]));
+      inDistance = append(inDistance, int(split[2]) / 10);
+
+      xVals = append(xVals, int((distanceFromSensor - inDistance[index]) * cos(radians(inRotation[index]))));
+      yVals = append(yVals, int((distanceFromSensor - inDistance[index]) * sin(radians(inRotation[index]))));
+
+      index++;
+    }
+    saveToFile(file);
+  }
+}
+

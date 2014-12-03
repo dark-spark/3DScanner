@@ -1,39 +1,35 @@
+import java.io.*;
+
 int distanceFromSensor = 428; //Millimeters from laser distance measure
 float inc = 0.01;
-float rotX;
-float rotY;
-float rotZ;
-int transX = width/2;
-int transY = height/2;
-float scale = 1;
+  String path = "C:/Users/Dark/Documents/Arduino/3DScanner/ScannerFiles";
 
 void setup() {
 
   size(800, 600, P3D); 
+  transX = width/2;
+  transY = height/2;
 
-  String path = sketchPath;
+  String[] filenames = loadFilenames(path);
 
-  String[] fileNames = listFileNames(path);
-
-  for (int i = 0; i < fileNames.length; i++) {
-  }
-
-  loadFromFile("FirstScan.txt");
+  String recentFile = filenames[filenames.length -1];
+  
+  loadFromFile(recentFile);
 }
 
 void draw() {
-  
+
   background(255);
   fill(0);
   translate(transX, transY);
-  
-  beginShape(POINTS);
+
+  beginShape(POINTS);t
   strokeWeight(2);
-  
+
   for (int i = 0; i < index; i++) {
     vertex(xVals[i], yVals[i], inHeight[i]);
   }
-  
+
   rotateX(rotX);
   rotateY(rotY);
   rotateZ(rotZ);
