@@ -15,7 +15,7 @@ void setup() {
 
   String recentFile = filenames[filenames.length -1];
 
-  loadFromFile(recentFile);
+  loadFromFile(path + recentFile);
 }
 
 void draw() {
