@@ -58,11 +58,6 @@ void setup() {
   
   findIndex();
   
-  leds[0] = CRGB(255,255,255);
-  FastLED.show();
-  
-  delay(5000);
-  
   leds[0] = CRGB::Blue;
   FastLED.show();
   
