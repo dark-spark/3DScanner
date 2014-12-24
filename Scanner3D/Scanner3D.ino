@@ -1,9 +1,21 @@
 #include <Encoder.h>
 #include <Stepper.h>
 #include <FastLED.h>
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h>
+#include <SoftI2CMaster.h>
+#include <avr/io.h>
 
 #define NUM_LEDS 1
 #define DATA_PIN 0
+
+#define SDA_PORT PORTB
+#define SDA_PIN 0
+#define SCL_PORT PORTB
+#define SCL_PIN 1
+#define I2C_TIMEOUT 100
+#define I2C_NOINTERRUPT 0
+#define I2C_SLOWMODE 1
 
 const int stepsPerRev = 48;
 const int distPerRev = 127;
@@ -31,37 +43,72 @@ int rc = 0 ;
 Stepper vertStepper(stepsPerRev, 12, 13, 14, 15);
 String recieved;
 
-CRGB leds[NUM_LEDS];
+// Creat a set of new characters
+const uint8_t charBitmap[][8] = {
+  { 
+    0xc, 0x12, 0x12, 0xc, 0, 0, 0, 0   }
+  ,
+  { 
+    0x6, 0x9, 0x9, 0x6, 0, 0, 0, 0   }
+  ,
+  { 
+    0x0, 0x6, 0x9, 0x9, 0x6, 0, 0, 0x0   }
+  ,
+  { 
+    0x0, 0xc, 0x12, 0x12, 0xc, 0, 0, 0x0   }
+  ,
+  { 
+    0x0, 0x0, 0xc, 0x12, 0x12, 0xc, 0, 0x0   }
+  ,
+  { 
+    0x0, 0x0, 0x6, 0x9, 0x9, 0x6, 0, 0x0   }
+  ,
+  { 
+    0x0, 0x0, 0x0, 0x6, 0x9, 0x9, 0x6, 0x0   }
+  ,
+  { 
+    0x0, 0x0, 0x0, 0xc, 0x12, 0x12, 0xc, 0x0   }
+};
+
+//CRGB leds[NUM_LEDS];
+LiquidCrystal_I2C lcd(0x38);  // Set the LCD I2C address
 
 void setup() {
-  
+
   Serial.begin(115200);
   Serial1.begin (115200);
   Serial.println("3D Scanner by Dark.Spark");
-  
+
   pinMode(indexPin, INPUT);
   pinMode(vertLowerLimit, INPUT_PULLUP);
   pinMode(plateMotor1, OUTPUT);
   pinMode(plateMotor2, OUTPUT);
-  
-  FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUM_LEDS);
-      
+
+  if (!i2c_init()) 
+    Serial.println(F("Initialization error. SDA or SCL are low"));
+  else
+    Serial.println(F("...done"));
+
+  int charBitmapSize = (sizeof(charBitmap ) / sizeof (charBitmap[0]));
+
+  lcd.begin(16,2);               // initialize the lcd 
+
+  for ( int i = 0; i < charBitmapSize; i++ )
+  {
+    lcd.createChar ( i, (uint8_t *)charBitmap[i] );
+  }
+
+  lcd.home ();                   // go home
+  lcd.print("Hello. 3DPrinter ");  
+  lcd.setCursor ( 0, 1 );        // go to the next line
+  lcd.print ("by Dark-Spark");
+
   vertStepper.setSpeed(100);
-  
-  leds[0] = CRGB::Red;
-  FastLED.show();
-  
   findVertLowerLimit();
-  
-  leds[0] = CRGB::Green;
-  FastLED.show();
-  
   findIndex();
-  
-  leds[0] = CRGB::Blue;
-  FastLED.show();
-  
   mode = 0;
+
+
 }
 
 void loop() {
@@ -75,7 +122,7 @@ void loop() {
   }
   else if(mode == 2) {
     for (int i = 0; i <= vertTravel; i = i + vertResolution) {
-//      int t = millis();
+      //      int t = millis();
       for (int j = 0; j <= 359; j = j + rotationResolution) {
         plateMove(j);
         delay(100); //Wait for plate motion to settle. 
@@ -84,8 +131,8 @@ void loop() {
       }
       findIndex();
       vertStepper.step(-steps(vertResolution));
-//      Serial.print("Timer = ");
-//      Serial.println(millis() - t);
+      //      Serial.print("Timer = ");
+      //      Serial.println(millis() - t);
     }
   } 
   else {
@@ -252,6 +299,7 @@ void serialSend(int rotationalPos, int vertPos, int distance) {
   Serial.print(",");
   Serial.println(distance);
 }
+
 
 
 
